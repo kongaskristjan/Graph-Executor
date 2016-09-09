@@ -28,7 +28,8 @@ public:
     virtual void set_async_mode(bool) = 0;
     virtual bool async_mode() const = 0;
     
-    virtual std::uint64_t push_job(std::unique_ptr<Job>) = 0;
+    virtual std::uint64_t push_job(std::unique_ptr<Job> job,
+                                   const std::vector<std::uint64_t> > & args) = 0;
     virtual void sync() = 0;
     virtual void sync(std::uint64_t) = 0;
     virtual void clear() = 0;

@@ -1,7 +1,7 @@
 
 #include <example_add.hpp>
 
-Integer::Integer(): x(0)
+Integer::Integer()
 {}
 
 

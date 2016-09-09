@@ -9,7 +9,7 @@ public:
     Integer();
     Integer(unsigned);
     
-    unsigned x;
+    unsigned x = 0;
 };
 
 

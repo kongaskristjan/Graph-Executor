@@ -15,13 +15,16 @@
   push_back() - push a job to be processed or
       a result to be used for initialization or to fill space
   
-  sync(i) - force Graph_executor to finish jobs before i.
+  sync(i) - force Graph_executor to finish all jobs j <= i.
       Will not return before everything is done.
-  clear(i) - release all results before i as soon as possible
-      If i is not specified, sync or clear everything.
+      If i is not specified, sync everything submitted.
+  clear(i) - release all results j <= i as soon as possible
+      If i is not specified, clear everything submitted that is independent.
   
-  operator[] - return result
-  hand_over() - hand result over to main process
+  operator[] - return result. If answer is not yet calculated,
+      wait until it is calculated.
+  hand_over() - hand result over to the main process. If answer is
+      not yet calculated, wait until it is calculated.
 */
 
 

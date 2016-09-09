@@ -9,16 +9,14 @@ void test_add()
 {
     std::cout << "Testing addition\n";
     const int n = 5;
-    const int loop = 1e6;
     std::vector<Result *> muls;
     for (int i = 0; i < n; ++i)
-        muls.push_back((Result *) new Integer(i));
-
-    for (int i = 0; i < loop; ++i){
-        std::unique_ptr<Job> add((Job *) new Add);
-        std::unique_ptr<Result> res(add->execute(muls));
-    }
-
+        muls.push_back(new Integer(i));
+    
+    std::unique_ptr<Job> add(new Add);
+    std::unique_ptr<Result> res(add->execute(muls));
+    std::cout << static_cast<Integer *>(res.get())->x << "\n";
+    
     for (int i = 0; i < n; ++i)
         delete muls[i];
 }

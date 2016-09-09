@@ -13,8 +13,9 @@ std::unique_ptr<Result> Add::execute(std::vector<Result *> args)
 {
     unsigned sum = 0; // Modular arithmetic (% 2^32)
     for (Result * arg: args){
-        Integer * x = (Integer *) arg;
+        Integer * x = static_cast<Integer *>(arg);
         sum += x->x;
     }
-    return std::unique_ptr<Result>((Result *) new Integer(sum));
+    
+    return std::unique_ptr<Result>(new Integer(sum));
 }

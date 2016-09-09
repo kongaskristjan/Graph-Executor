@@ -7,7 +7,7 @@
 /*
   Result:
   Store information to derived classes of Result.
-  Use dynamic_cast() to exctract this information.
+  Use static_cast() to exctract this information.
 */
 
 class Result {

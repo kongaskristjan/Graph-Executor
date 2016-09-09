@@ -46,7 +46,7 @@ public:
     virtual Result & operator[](std::uint64_t) = 0;
     virtual std::unique_ptr<Result> hand_over(std::uint64_t) = 0;
     
-    virtual inline ~Graph_executor() = 0;
+    virtual inline ~Graph_executor();
 };
 
 inline Graph_executor::~Graph_executor()

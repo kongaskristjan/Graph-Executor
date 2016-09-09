@@ -11,13 +11,15 @@
 */
 
 class Result {
-    virtual inline ~Result() = 0;
+public:
+    virtual ~Result();
 };
 
 
 class Job {
+public:
     virtual std::unique_ptr<Result> execute(std::vector<Result *>) = 0;
-    virtual ~Job() = 0;
+    virtual ~Job();
 };
 
 

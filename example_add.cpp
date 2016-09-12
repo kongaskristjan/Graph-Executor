@@ -9,11 +9,12 @@ Integer::Integer(unsigned _x): x(_x)
 {}
 
 
-std::unique_ptr<Result> Add::execute(std::vector<Result *> args)
+std::unique_ptr<Result> Add::execute(
+    const std::vector<const Result *> & args) const
 {
     unsigned sum = 0; // Modular arithmetic (% 2^32)
-    for (Result * arg: args){
-        Integer * x = static_cast<Integer *>(arg);
+    for (const Result * arg: args){
+        const Integer * x = static_cast<const Integer *>(arg);
         sum += x->x;
     }
     

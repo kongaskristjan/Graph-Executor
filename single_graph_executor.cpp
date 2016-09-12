@@ -130,7 +130,7 @@ void Single_graph_executor::calculate(uint64_t index)
     if (tasks[index].result)
         return;
     
-    thread_local std::vector<Result *> job_args;
+    thread_local std::vector<const Result *> job_args;
     job_args.clear();
     for (uint64_t arg: tasks[index].args)
         job_args.push_back(tasks[arg].result.get());

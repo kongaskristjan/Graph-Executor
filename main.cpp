@@ -10,7 +10,7 @@ void test_add()
 {
     std::cout << "Testing addition\n";
     const int n = 5;
-    std::vector<Result *> muls;
+    std::vector<const Result *> muls;
     for (int i = 0; i < n; ++i)
         muls.push_back(new Integer(i));
     

@@ -15,7 +15,8 @@ public:
 
 class Add: public Job {
 public:
-    std::unique_ptr<Result> execute(std::vector<Result *> args) override;
+    std::unique_ptr<Result> execute(
+        const std::vector<const Result *> & args) const override;
 };
 
 #endif

@@ -18,7 +18,8 @@ public:
 
 class Job {
 public:
-    virtual std::unique_ptr<Result> execute(std::vector<Result *>) = 0;
+    virtual std::unique_ptr<Result> execute(
+        const std::vector<const Result *> &) const = 0;
     virtual ~Job();
 };
 

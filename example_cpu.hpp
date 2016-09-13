@@ -1,24 +1,26 @@
 #ifndef __EXAMPLE_CPU_HPP__
 #define __EXAMPLE_CPU_HPP__
 
-#include <job.hpp>
+#include <example_job.hpp>
 #include <vector>
 #include <memory>
 #include <cassert>
 #include <iostream>
 
 // For arithmetic modulo 2^32
-class Vector_int: public Result {
+class Vector_int: public Example_result {
 public:
-    std::vector<unsigned> nums;
     Vector_int(size_t, bool nonzero = false);
+    virtual unsigned hash() const override;
+
+    std::vector<unsigned> nums;
 };
 
-bool operator==(const Vector_int &, const Vector_int &);
 std::ostream & operator<<(std::ostream &, const Vector_int &);
 
-class Cpu_consumer: public Job {
+class Cpu_consumer: public Example_job {
 public:
+    std::string name() const override;
     std::unique_ptr<Result> execute(
         const std::vector<const Result *> &) const override;
 };

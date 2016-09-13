@@ -9,6 +9,18 @@ Integer::Integer(unsigned _x): x(_x)
 {}
 
 
+unsigned Integer::hash() const
+{
+    return x;
+}
+
+
+std::string Add::name() const
+{
+    return "Add";
+}
+
+
 std::unique_ptr<Result> Add::execute(
     const std::vector<const Result *> & args) const
 {

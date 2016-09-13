@@ -34,6 +34,10 @@ void test_graph_executor(Graph_executor & executor)
                                     (new Vector_int(10, true))));
     indeces.push_back(executor.push(std::unique_ptr<Result>
                                     (new Vector_int(10, true))));
+    
+    std::unique_ptr<Example_job> ptr(new Cpu_consumer);
+    std::cout << ptr->name() << "\n";
+    
     for (int i = 2; i <= n; ++i)
         indeces.push_back(
             executor.push(std::unique_ptr<Job>(new Cpu_consumer),
@@ -42,7 +46,8 @@ void test_graph_executor(Graph_executor & executor)
 
     for (uint64_t index: indeces){
         std::cout << "index: " << index << "\n";
-        std::cout << "ans: " << static_cast<const Vector_int &>(executor[index]) << "\n";
+        auto vec = static_cast<const Vector_int &>(executor[index]);
+        std::cout << "ans: " << vec << " " << vec.hash() << "\n";
     }
 }
 

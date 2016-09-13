@@ -10,9 +10,16 @@ Vector_int::Vector_int(size_t sz, bool nonzero): nums(sz)
 }
 
 
-bool operator==(const Vector_int & x, const Vector_int & y)
+unsigned Vector_int::hash() const
 {
-    return x.nums == y.nums;
+    unsigned h = 0;
+    unsigned mul = 1;
+    for (unsigned x: nums){
+        h += mul * x;
+        mul *= 83742932u;
+    }
+
+    return h;
 }
 
 
@@ -24,6 +31,12 @@ std::ostream & operator<<(std::ostream & os, const Vector_int & v)
     os << ")";
 
     return os;
+}
+
+
+std::string Cpu_consumer::name() const
+{
+    return "CPU Consumer";
 }
 
 

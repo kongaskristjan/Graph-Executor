@@ -6,8 +6,11 @@
 #include <memory>
 #include <vector>
 
+// FIXME: change clone to =0;
+
 class Example_result: public Result {
 public:
+    virtual std::unique_ptr<Example_result> clone() const = 0;
     virtual unsigned hash() const = 0;
     virtual ~Example_result();
 };
@@ -15,7 +18,7 @@ public:
 
 class Example_job: public Job {
 public:
-    virtual std::string name() const = 0;
+    virtual std::unique_ptr<Example_job> clone() const = 0;
     virtual std::unique_ptr<Result> execute(
         const std::vector<const Result *> &) const = 0;
     virtual ~Example_job();

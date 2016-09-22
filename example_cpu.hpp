@@ -11,7 +11,8 @@
 class Vector_int: public Example_result {
 public:
     Vector_int(size_t, bool nonzero = false);
-    virtual unsigned hash() const override;
+    std::unique_ptr<Example_result> clone() const override;
+    unsigned hash() const override;
 
     std::vector<unsigned> nums;
 };
@@ -20,7 +21,7 @@ std::ostream & operator<<(std::ostream &, const Vector_int &);
 
 class Cpu_consumer: public Example_job {
 public:
-    std::string name() const override;
+    std::unique_ptr<Example_job> clone() const override;
     std::unique_ptr<Result> execute(
         const std::vector<const Result *> &) const override;
 };

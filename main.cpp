@@ -37,7 +37,6 @@ void test_graph_executor(Graph_executor & executor)
                                     (new Vector_int(10, true))));
     
     std::unique_ptr<Example_job> ptr(new Cpu_consumer);
-    std::cout << ptr->name() << "\n";
     
     for (int i = 2; i <= n; ++i){
         std::cerr << i << ": indeces: " << indeces[i - 2] << " " << indeces[i - 1] << "\n";

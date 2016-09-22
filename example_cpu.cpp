@@ -10,6 +10,14 @@ Vector_int::Vector_int(size_t sz, bool nonzero): nums(sz)
 }
 
 
+std::unique_ptr<Example_result> Vector_int::clone() const
+{
+    auto ret(std::make_unique<Vector_int>(nums.size()));
+    ret->nums = nums;
+    return ret;
+}
+
+
 unsigned Vector_int::hash() const
 {
     unsigned h = 0;
@@ -34,9 +42,9 @@ std::ostream & operator<<(std::ostream & os, const Vector_int & v)
 }
 
 
-std::string Cpu_consumer::name() const
+std::unique_ptr<Example_job> Cpu_consumer::clone() const
 {
-    return "CPU Consumer";
+    return std::make_unique<Cpu_consumer>(); // Nothing to clone
 }
 
 

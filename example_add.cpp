@@ -1,12 +1,14 @@
 
 #include <example_add.hpp>
 
-Integer::Integer()
-{}
-
-
 Integer::Integer(unsigned _x): x(_x)
 {}
+
+
+std::unique_ptr<Example_result> Integer::clone() const
+{
+    return std::make_unique<Integer>(x);
+}
 
 
 unsigned Integer::hash() const
@@ -15,9 +17,9 @@ unsigned Integer::hash() const
 }
 
 
-std::string Add::name() const
+std::unique_ptr<Example_job> Add::clone() const
 {
-    return "Add";
+    return std::make_unique<Add>();
 }
 
 

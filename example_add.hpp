@@ -8,8 +8,9 @@
 // Modular arithmetic (% 2^32)
 class Integer: public Example_result {
 public:
-    Integer();
+    Integer() = default;
     Integer(unsigned);
+    std::unique_ptr<Example_result> clone() const override;
     virtual unsigned hash() const override;
 
     unsigned x = 0;
@@ -18,7 +19,7 @@ public:
 
 class Add: public Example_job {
 public:
-    std::string name() const override;
+    std::unique_ptr<Example_job> clone() const override;
     std::unique_ptr<Result> execute(
         const std::vector<const Result *> & args) const override;
 };

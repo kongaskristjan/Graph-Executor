@@ -17,5 +17,6 @@ int main()
 
     for (int i = 0; i < 10; ++i)
         Perform_tests::all(tester);
+
     return 0;
 }

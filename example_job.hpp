@@ -6,8 +6,6 @@
 #include <memory>
 #include <vector>
 
-// FIXME: change clone to =0;
-
 class Example_result: public Result {
 public:
     virtual std::unique_ptr<Example_result> clone() const = 0;

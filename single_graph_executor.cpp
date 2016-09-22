@@ -2,137 +2,108 @@
 #include <single_graph_executor.hpp>
 
 Single_graph_executor::Task::Task(
+    int _dep_count,
     std::unique_ptr<Job> _job, const std::vector<uint64_t> & _args):
-    job(std::move(_job)), args(_args)
+    dep_count(_dep_count), job(std::move(_job)), args(_args)
 {}
 
 
-Single_graph_executor::Task::Task(std::unique_ptr<Result> _result):
-    result(std::move(_result))
+Single_graph_executor::Task::Task(
+    int _dep_count, std::unique_ptr<Result> _result):
+    dep_count(_dep_count), result(std::move(_result))
 {}
 
 
-Single_graph_executor::Single_graph_executor(bool _async):
-    async(_async)
-{}
-
-
-void Single_graph_executor::set_async_mode(bool _async)
+uint64_t Single_graph_executor::push(
+    size_t dep_count, std::unique_ptr<Job> job,
+    const std::vector<uint64_t> & args)
 {
-    async = _async;
-    if (async)
-        sync();
-}
+    ++total;
+    tasks.emplace_back(dep_count, std::move(job), args);
+    for (const uint64_t a: tasks[total - offset].args){
+        good_arg(a);
+        
+        if (tasks[a - offset].dep_count == 0)
+            tasks[a - offset].result.reset();
+        else
+            --tasks[a - offset].dep_count;
+    }
 
+    while (! pushing && synced < total){
+        pushing = true;
+        sync(total);
+        pushing = false;
+        // Pushing flag avoids recursion, thus eliminating
+        // a data race and stack issues
+    }
 
-bool Single_graph_executor::async_mode() const
-{
-    return async;
+    check_invariant();
+    return total - 1;
 }
 
 
 uint64_t Single_graph_executor::push(
-    std::unique_ptr<Job> job,
-    const std::vector<uint64_t> & args)
+    size_t dep_count, std::unique_ptr<Result> result)
 {
-    tasks.emplace_back(std::move(job), args);
-    for (const uint64_t arg: tasks[total - offset].args){
-        assert(arg >= cleared); // Argument has not been marked as cleared
-        assert(arg < total); // Argument does exist
-        ++tasks[arg - offset].dep_count;
-    }
-
-    if (async)
-        while (! pushing && synced < total){
-            pushing = true;
-            sync();
-            pushing = false;
-            // Pushing flag avoids recursion, thus eliminating
-            // stack issues
-        }
-    
-    return total++;
-}
-
-
-uint64_t Single_graph_executor::push(std::unique_ptr<Result> result)
-{
-    tasks.emplace_back(std::move(result));
-    return total++;
-}
-
-
-void Single_graph_executor::sync()
-{
-    sync(total);
-}
-
-
-void Single_graph_executor::sync(uint64_t index)
-{
-    assert(index <= total);
-    for (uint64_t i = synced; i < index; ++i)
-        calculate(i);
-    synced = std::max(index, synced);
+    tasks.emplace_back(dep_count, std::move(result));
+    ++total;
+    check_invariant();
+    return total - 1;
 }
 
 
 void Single_graph_executor::clear()
 {
-    clear(total);
-}
-
-
-void Single_graph_executor::clear(uint64_t index)
-{
-    assert(index <= total);
-    uint64_t last = std::min(index, offset + tasks.size() - 1);
-    for (uint64_t i = cleared + 1; i <= last; ++i)
-        if (! tasks[i - offset].dep_count)
-            tasks[i - offset].result.reset();
-
-    cleared = std::max(cleared, index);
-    while (cleared > offset && ! tasks.empty() && ! tasks.front().dep_count){
-        tasks.pop_front();
-        ++offset;
-    }
+    sync(total);
+    tasks.clear();
+    check_invariant();
 }
 
 
 const Result & Single_graph_executor::operator[](uint64_t index)
 {
-    assert(index >= cleared); // Index has not been marked as cleared
-    assert(index < offset + tasks.size()); // Index does exist
+    assert(index >= offset); // Index has not been cleared
+    assert(index < total); // Index exists
     sync(index + 1);
     
     assert(tasks[index].result); // Return is still owned by graph executor
+    check_invariant();
     return * tasks[index].result;
 }
 
 
 std::unique_ptr<Result> Single_graph_executor::hand_over(uint64_t index)
 {
-    assert(index >= cleared); // Index has not been marked as cleared
-    assert(index < offset + tasks.size()); // Index does exist
-    
-    uint64_t i = synced;
-    while (! tasks[index].dep_count){
-        assert(i < offset + tasks.size()); // Internal error
-        sync(i + 1);
-    }
+    assert(index >= offset); // Index has not been cleared
+    assert(index < total); // Index exists
+    sync(index + 1);
 
+    check_invariant();
     return std::move(tasks[index].result);
 }
 
 
 void Single_graph_executor::calculate(uint64_t index)
 {
-    if (tasks[index].result)
+    if (tasks[index - offset].result)
         return;
     
-    thread_local std::vector<const Result *> job_args;
-    job_args.clear();
-    for (uint64_t arg: tasks[index].args)
-        job_args.push_back(tasks[arg].result.get());
-    tasks[index].result = std::move(tasks[index].job->execute(job_args));
+    std::vector<const Result *> job_args;
+    for (uint64_t a: tasks[index - offset].args){
+        good_arg(a);
+        job_args.push_back(tasks[a - offset].result.get());
+    }
+    
+    tasks[index - offset].result
+        = std::move(tasks[index - offset].job->execute(job_args));
+}
+
+
+void Single_graph_executor::sync(uint64_t index)
+{
+    std::cerr << index << " " << total << "\n";
+    assert(index <= total);
+    for (uint64_t i = synced; i < index; ++i)
+        calculate(i);
+    synced = std::max(index, synced);
 }

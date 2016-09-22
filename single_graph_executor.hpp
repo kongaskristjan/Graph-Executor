@@ -9,61 +9,71 @@
 #include <cstdint>
 #include <deque>
 #include <vector>
+#include <iostream>
 
 /*
   Single_graph_executor:
-  Async management is for compatibility and better debugging.
-  if (async):   All execution is done right after push
-  if (! async): excecution is done on accessing or syncing.
-
-  This async definition is more similar to the usual one,
-  where in async mode execution starts/continues at pushing, but
-  is only done at syncing or accessing if this mode is off.
+  
+  All jobs are done using the main thread.
 */
 
 class Single_graph_executor: public Graph_executor {
 public:
-    Single_graph_executor(bool _async = true);
-    void set_async_mode(bool);
-    bool async_mode() const;
+    uint64_t push(size_t dep_count, std::unique_ptr<Job> job,
+                  const std::vector<uint64_t> & args) override;
+    uint64_t push(size_t dep_count, std::unique_ptr<Result>) override;
+    void clear() override;
     
-    uint64_t push(std::unique_ptr<Job> job,
-                  const std::vector<uint64_t> & args);
-    uint64_t push(std::unique_ptr<Result>);
-    
-    void sync();
-    void sync(uint64_t);
-    void clear();
-    void clear(uint64_t);
-    
-    const Result & operator[](uint64_t);
-    std::unique_ptr<Result> hand_over(uint64_t);
+    const Result & operator[](uint64_t) override;
+    std::unique_ptr<Result> hand_over(uint64_t) override;
 
     struct Task {
         Task() = default;
         Task(const Task &) = delete;
-        Task(std::unique_ptr<Job>, const std::vector<uint64_t> &);
-        Task(std::unique_ptr<Result>);
+        Task(int, std::unique_ptr<Job>, const std::vector<uint64_t> &);
+        Task(int, std::unique_ptr<Result>);
 
+        int dep_count = 0;
         std::unique_ptr<Job> job = nullptr;
         std::unique_ptr<Result> result = nullptr;
         std::vector<uint64_t> args;
-        size_t dep_count = 0;
     };
     
 private:
     void calculate(uint64_t);
+    void sync(uint64_t); // do every job before i
+
+    inline void check_invariant();
+    inline void good_arg(uint64_t);
     
-    bool async;
     bool pushing = 0; /* This flag is always false, unless in push
-                         function. Avoids recursive pushing/syncing
-                         to avoid stack issues */
+                         function. Avoids data race, when pushing
+                         from a Task function. */
     
     uint64_t offset = 0;
     uint64_t synced = 0;
-    uint64_t cleared = 0;
     uint64_t total = 0;
     std::deque<Task> tasks;
 };
+
+
+inline void Single_graph_executor::check_invariant()
+{
+    assert(! pushing);
+    assert(offset <= total);
+    assert(offset <= synced);
+    assert(synced <= total);
+    assert(offset + tasks.size() == total);
+}
+
+
+inline void Single_graph_executor::good_arg(uint64_t arg)
+{
+    assert(arg < total); // Argument exists
+    assert(arg >= offset); // Argument is cleared
+    std::cerr << arg << "\tdep count: " << tasks[arg - offset].dep_count << "\n";
+    assert(tasks[arg - offset].dep_count > 0); // Dep count is non-zero
+    assert(tasks[arg - offset].result); // Result exists
+}
 
 #endif

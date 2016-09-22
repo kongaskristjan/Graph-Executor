@@ -65,9 +65,10 @@ void Tester::verify_and_end_test()
 
 std::vector<uint64_t> Tester::gen_shuffled() const
 {
-    std::vector<uint64_t> vec(total);
-    std::iota(vec.begin(), vec.end(), 0);
-    return vec;
+    std::vector<uint64_t> v(total);
+    std::iota(v.begin(), v.end(), 0);
+    std::random_shuffle(v.begin(), v.end());
+    return v;
 }
 
 

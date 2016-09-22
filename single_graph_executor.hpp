@@ -3,6 +3,7 @@
 
 #include <graph_executor.hpp>
 #include <job.hpp>
+#include <limits>
 #include <memory>
 #include <algorithm>
 #include <cassert>
@@ -33,10 +34,10 @@ public:
     struct Task {
         Task() = default;
         Task(const Task &) = delete;
-        Task(int, std::unique_ptr<Job>, const std::vector<uint64_t> &);
-        Task(int, std::unique_ptr<Result>);
+        Task(int64_t, std::unique_ptr<Job>, const std::vector<uint64_t> &);
+        Task(int64_t, std::unique_ptr<Result>);
 
-        int dep_count = 0;
+        int64_t dep_count = 0;
         std::unique_ptr<Job> job = nullptr;
         std::unique_ptr<Result> result = nullptr;
         std::vector<uint64_t> args;
@@ -45,6 +46,7 @@ public:
 private:
     void calculate(uint64_t);
     void sync(uint64_t); // do every job before i
+    int64_t correct_dep(int64_t); // -1  ->  max<int64_t>()
 
     inline void check_invariant();
     inline void good_arg(uint64_t);
@@ -72,9 +74,10 @@ inline void Single_graph_executor::check_invariant()
 
 inline void Single_graph_executor::good_arg(uint64_t arg)
 {
+    (void) arg;
+    
     assert(arg < total); // Argument exists
     assert(arg >= offset); // Argument is cleared
-    std::cerr << arg << "\tdep count: " << tasks[arg - offset].dep_count << "\n";
     assert(tasks[arg - offset].dep_count > 0); // Dep count is non-zero
     assert(tasks[arg - offset].result); // Result exists
 }

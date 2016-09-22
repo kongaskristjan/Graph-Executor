@@ -14,7 +14,9 @@
 /*
   Single_graph_executor:
   
-  All jobs are done using the main thread.
+  All jobs are done using the main thread. Thus all jobs
+  must be possible to do using a single thread. Some (complex
+  and obscure) constructs are not.
 */
 
 class Single_graph_executor: public Graph_executor {
@@ -26,6 +28,7 @@ public:
     
     const Result & operator[](uint64_t) override;
     std::unique_ptr<Result> hand_over(uint64_t) override;
+    std::unique_ptr<Result> force_hand_over(uint64_t) override;
 
     struct Task {
         Task() = default;
@@ -47,7 +50,7 @@ private:
     inline void good_arg(uint64_t);
     
     bool pushing = 0; /* This flag is always false, unless in push
-                         function. Avoids data race, when pushing
+                         function. Avoids a data race, when pushing
                          from a Task function. */
     
     uint64_t offset = 0;

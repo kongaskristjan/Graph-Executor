@@ -83,6 +83,13 @@ std::unique_ptr<Result> Single_graph_executor::hand_over(uint64_t index)
 }
 
 
+std::unique_ptr<Result> Single_graph_executor::force_hand_over(uint64_t index)
+{
+    tasks[index].dep_count = 0;
+    return std::move(hand_over(index));
+}
+
+
 void Single_graph_executor::calculate(uint64_t index)
 {
     if (tasks[index - offset].result)
@@ -101,7 +108,6 @@ void Single_graph_executor::calculate(uint64_t index)
 
 void Single_graph_executor::sync(uint64_t index)
 {
-    std::cerr << index << " " << total << "\n";
     assert(index <= total);
     for (uint64_t i = synced; i < index; ++i)
         calculate(i);

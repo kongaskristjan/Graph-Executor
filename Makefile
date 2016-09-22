@@ -1,5 +1,8 @@
+CXXFLAGS = -Wall -Wextra -std=c++14 -I.
 
-CXXFLAGS = -Wall -Wextra -std=c++14 -I. -g
+CXXFLAGS += -g # debug mode
+#CXXFLAGS += -O2 -D NDEBUG # performance mode
+
 LIBS = -pthread
 BIN = test
 

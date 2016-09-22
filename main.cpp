@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 
+// Bad memory management
 void test_add()
 {
     std::cout << "Testing addition\n";
@@ -30,19 +31,21 @@ void test_graph_executor(Graph_executor & executor)
     const int n = 10;
     
     std::vector<uint64_t> indeces;
-    indeces.push_back(executor.push(std::unique_ptr<Result>
+    indeces.push_back(executor.push(2, std::unique_ptr<Result>
                                     (new Vector_int(10, true))));
-    indeces.push_back(executor.push(std::unique_ptr<Result>
+    indeces.push_back(executor.push(2, std::unique_ptr<Result>
                                     (new Vector_int(10, true))));
     
     std::unique_ptr<Example_job> ptr(new Cpu_consumer);
     std::cout << ptr->name() << "\n";
     
-    for (int i = 2; i <= n; ++i)
+    for (int i = 2; i <= n; ++i){
+        std::cerr << i << ": indeces: " << indeces[i - 2] << " " << indeces[i - 1] << "\n";
         indeces.push_back(
-            executor.push(std::unique_ptr<Job>(new Cpu_consumer),
+            executor.push(2, std::unique_ptr<Job>(new Cpu_consumer),
                           std::vector<uint64_t>
                           ({indeces[i - 2], indeces[i - 1]})));
+    }
 
     for (uint64_t index: indeces){
         std::cout << "index: " << index << "\n";
@@ -55,7 +58,7 @@ void test_graph_executor(Graph_executor & executor)
 int main()
 {
     test_add();
-    std::unique_ptr<Graph_executor> executor(new Single_graph_executor(false));
+    std::unique_ptr<Graph_executor> executor(new Single_graph_executor);
     test_graph_executor(* executor.get());
     
     return 0;

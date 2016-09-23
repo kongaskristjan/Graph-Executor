@@ -21,7 +21,8 @@
       not yet calculated, it will wait until it is calculated.
       If answer is used by another job, Graph_executor waits until it's done.
   force_hand_over() - Same as hand_over, but doesn't wait if other
-      jobs might use it according to dep_count.
+      jobs might use it according to dep_count. Might cause a Segmentation
+      Fault if used incorrectly.
 
   Graph_executor assumes at the moment, that no jobs are created within
       jobs themselves. However, this might change later.

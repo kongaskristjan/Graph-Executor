@@ -1,10 +1,10 @@
 #ifndef __GRAPH_EXECUTOR_HPP__
 #define __GRAPH_EXECUTOR_HPP__
 
+#include <job.hpp>
 #include <memory>
 #include <cstdint>
-#include <job.hpp>
-
+#include <vector>
 
 /*
   Graph_executor:

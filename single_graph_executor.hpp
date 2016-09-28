@@ -48,8 +48,8 @@ private:
     void sync(uint64_t); // do every job before i
     int64_t correct_dep(int64_t); // -1  ->  max<int64_t>()
 
-    inline void check_invariant();
-    inline void good_arg(uint64_t);
+    inline void check_invariant() const;
+    inline void good_arg(uint64_t) const;
     
     bool pushing = 0; /* This flag is always false, unless in push
                          function. Avoids a data race, when pushing
@@ -62,7 +62,7 @@ private:
 };
 
 
-inline void Single_graph_executor::check_invariant()
+inline void Single_graph_executor::check_invariant() const
 {
     assert(! pushing);
     assert(offset <= total);
@@ -72,7 +72,7 @@ inline void Single_graph_executor::check_invariant()
 }
 
 
-inline void Single_graph_executor::good_arg(uint64_t arg)
+inline void Single_graph_executor::good_arg(uint64_t arg) const
 {
     (void) arg;
     

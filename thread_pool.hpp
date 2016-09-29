@@ -8,6 +8,9 @@
   Thread_pool:
   push() - push a job to be processed
   wait() - wait for all jobs to complete
+
+  push() can be called from Thread_pool_job::execute(),
+      but wait() shouldn't
 */
 
 class Thread_pool {

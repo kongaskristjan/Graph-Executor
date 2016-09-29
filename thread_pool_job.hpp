@@ -7,6 +7,7 @@
 */
 
 class Thread_pool_job {
+public:
     virtual void execute() = 0;
     virtual ~Thread_pool_job();
 };

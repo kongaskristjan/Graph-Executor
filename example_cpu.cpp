@@ -58,7 +58,7 @@ std::unique_ptr<Result> Cpu_consumer::execute(
 
     // Does some pointless CPU time consuming
     // deterministic modular calculations
-    std::unique_ptr<Vector_int> result(new Vector_int(sz));
+    auto result = std::make_unique<Vector_int>(sz);
     for (size_t i = 0; i < sz; ++i)
         for (size_t j = i; j < sz - 1; ++j)
             result->nums[i] += arg0->nums[j] ^ arg1->nums[j + 1];

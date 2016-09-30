@@ -32,5 +32,5 @@ std::unique_ptr<Result> Add::execute(
         sum += x->x;
     }
     
-    return std::unique_ptr<Result>(new Integer(sum));
+    return std::make_unique<Integer>(sum);
 }

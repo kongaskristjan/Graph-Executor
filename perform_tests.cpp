@@ -3,8 +3,18 @@
 
 void Perform_tests::all(Tester & tester, const size_t n)
 {
+    exponent(tester, n);
     fibonacci(tester, n);
     random_add(tester, n);
+}
+
+
+void Perform_tests::exponent(Tester & tester, const size_t n)
+{
+    for (size_t i = 1; i <= n; ++i)
+        tester.push(Example_exp(3, i), std::vector<uint64_t>());
+    
+    tester.verify_and_end_test();
 }
 
 

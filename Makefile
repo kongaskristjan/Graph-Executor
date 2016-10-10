@@ -1,3 +1,5 @@
+#CXX = clang++
+
 CXXFLAGS = -Wall -Wextra -std=c++14 -I.
 
 CXXFLAGS += -g # debug mode

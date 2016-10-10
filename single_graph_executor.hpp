@@ -22,19 +22,29 @@
 
 class Single_graph_executor: public Graph_executor {
 public:
-    uint64_t push(size_t dep_count, std::unique_ptr<Job> job,
-                  const std::vector<uint64_t> & args) override;
-    uint64_t push(size_t dep_count, std::unique_ptr<Result>) override;
+    std::unique_ptr<Graph_ptr> push(
+        size_t dep_count, std::unique_ptr<Job> job,
+        const std::vector<Graph_ptr *> & args) override;
+    std::unique_ptr<Graph_ptr> push(
+        size_t dep_count, std::unique_ptr<Result>) override;
     void clear() override;
     
-    const Result & operator[](uint64_t) override;
-    std::unique_ptr<Result> hand_over(uint64_t) override;
-    std::unique_ptr<Result> force_hand_over(uint64_t) override;
+    const Result & operator[](const Graph_ptr &) override;
+    std::unique_ptr<Result> hand_over(const Graph_ptr &) override;
+    std::unique_ptr<Result> force_hand_over(const Graph_ptr &) override;
+    
+    struct Single_graph_ptr: public Graph_ptr {
+        uint64_t id;
 
+        inline Single_graph_ptr() = default;
+        inline Single_graph_ptr(uint64_t);
+    };
+    
+    
     struct Task {
         Task() = default;
         Task(const Task &) = delete;
-        Task(int64_t, std::unique_ptr<Job>, const std::vector<uint64_t> &);
+        Task(int64_t, std::unique_ptr<Job>, const std::vector<Graph_ptr *> &);
         Task(int64_t, std::unique_ptr<Result>);
 
         int64_t dep_count = 0;
@@ -48,18 +58,31 @@ private:
     void sync(uint64_t); // do every job before i
     int64_t correct_dep(int64_t); // -1  ->  max<int64_t>()
 
+    inline uint64_t ptr_to_index(const Graph_ptr &);
+    
     inline void check_invariant() const;
     inline void good_arg(uint64_t) const;
     
     bool pushing = 0; /* This flag is always false, unless in push
                          function. Avoids a data race, when pushing
-                         from a Task function. */
+                         from a Job's execute function. */
     
     uint64_t offset = 0;
     uint64_t synced = 0;
     uint64_t total = 0;
     std::deque<Task> tasks;
 };
+
+
+inline Single_graph_executor::Single_graph_ptr::Single_graph_ptr(uint64_t _id):
+    id(_id)
+{}
+
+
+inline uint64_t Single_graph_executor::ptr_to_index(const Graph_ptr & ptr)
+{
+    return static_cast<const Single_graph_ptr &>(ptr).id;
+}
 
 
 inline void Single_graph_executor::check_invariant() const
@@ -74,8 +97,6 @@ inline void Single_graph_executor::check_invariant() const
 
 inline void Single_graph_executor::good_arg(uint64_t arg) const
 {
-    (void) arg;
-    
     assert(arg < total); // Argument exists
     assert(arg >= offset); // Argument is cleared
     assert(tasks[arg - offset].dep_count > 0); // Dep count is non-zero

@@ -29,7 +29,7 @@ public:
 
     struct Exec_holder {
         std::unique_ptr<Graph_executor> exec;
-        std::vector<uint64_t> args_map;
+        std::vector<std::unique_ptr<Graph_ptr> > result_map;
 
         Exec_holder() = default;
         Exec_holder(std::unique_ptr<Graph_executor>);

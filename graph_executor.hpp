@@ -34,17 +34,22 @@
       must be those given as arguments)."""
 */
 
+struct Graph_ptr {
+};
+
 
 class Graph_executor {
 public:
-    virtual uint64_t push(size_t dep_count, std::unique_ptr<Job>,
-                          const std::vector<uint64_t> & args) = 0;
-    virtual uint64_t push(size_t dep_count, std::unique_ptr<Result>) = 0;
+    virtual std::unique_ptr<Graph_ptr> push(
+        size_t dep_count, std::unique_ptr<Job>,
+        const std::vector<Graph_ptr *> & args) = 0;
+    virtual std::unique_ptr<Graph_ptr> push(
+        size_t dep_count, std::unique_ptr<Result>) = 0;
     virtual void clear() = 0;
     
-    virtual const Result & operator[](uint64_t) = 0;
-    virtual std::unique_ptr<Result> hand_over(uint64_t) = 0;
-    virtual std::unique_ptr<Result> force_hand_over(uint64_t) = 0;
+    virtual const Result & operator[](const Graph_ptr &) = 0;
+    virtual std::unique_ptr<Result> hand_over(const Graph_ptr &) = 0;
+    virtual std::unique_ptr<Result> force_hand_over(const Graph_ptr &) = 0;
     
     virtual inline ~Graph_executor();
 };

@@ -8,7 +8,7 @@ Example_exp::Example_exp(uint64_t _base, uint64_t _pow):
 
 std::unique_ptr<Example_job> Example_exp::clone() const
 {
-    return std::move(std::make_unique<Example_exp>(base, pow));
+    return std::make_unique<Example_exp>(base, pow);
 }
 
 
@@ -20,5 +20,5 @@ std::unique_ptr<Result> Example_exp::execute(
     for (uint64_t i = 0; i < pow; ++i)
         prod *= base;
 
-    return std::move(std::make_unique<Integer>(prod));
+    return std::make_unique<Integer>(prod);
 }

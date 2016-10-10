@@ -14,7 +14,7 @@ std::unique_ptr<Example_result> Vector_int::clone() const
 {
     auto ret(std::make_unique<Vector_int>(nums.size()));
     ret->nums = nums;
-    return ret;
+    return std::move(ret);
 }
 
 

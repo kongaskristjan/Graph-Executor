@@ -6,11 +6,14 @@
 #include <example_cpu.hpp>
 #include <tester.hpp>
 #include <perform_tests.hpp>
+#include <thread_pool_tester.hpp>
+#include <perform_thread_pool_tests.hpp>
+#include <lock_thread_pool.hpp>
 #include <iostream>
 #include <memory>
 #include <vector>
 
-int main()
+void test_graph_executor()
 {
     Tester tester;
     tester.add_executor(std::make_unique<Single_graph_executor>());
@@ -18,6 +21,23 @@ int main()
 
     for (int i = 0; i < 10; ++i)
         Perform_tests::all(tester);
+}
+
+
+void test_thread_pool()
+{
+    Thread_pool_tester tester;
+    tester.add(std::make_unique<Lock_thread_pool>(1));
+    tester.add(std::make_unique<Lock_thread_pool>(1));
+
+    perform_all_tests(tester);
+}
+
+
+int main()
+{
+    //    test_graph_executor();
+    test_thread_pool();
 
     return 0;
 }

@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 #include <cassert>
+#include <exception>
 #include <thread_pool.hpp>
 
 class Thread_pool_tester {
@@ -14,7 +15,7 @@ public:
     void test(uint64_t (* test)(Thread_pool &), const std::string & name);
 
 private:
-    std::vector<std::unique_ptr<Thread_pool> > thread_pools;
+    std::vector<std::unique_ptr<Thread_pool>> thread_pools;
 };
 
 #endif

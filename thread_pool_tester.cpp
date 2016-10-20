@@ -1,6 +1,5 @@
 
 #include <thread_pool_tester.hpp>
-#include <unistd.h>
 
 void Thread_pool_tester::add(std::unique_ptr<Thread_pool> tp)
 {
@@ -15,20 +14,23 @@ void Thread_pool_tester::test(uint64_t (* test)(Thread_pool &),
     if (thread_pools.empty())
         return;
 
-    uint64_t hash = 0;
+    uint64_t hash0 = 0;
     for (size_t i = 0; i < thread_pools.size(); ++i){
         auto before = std::chrono::steady_clock::now();
-        uint64_t test_hash = test(* thread_pools[i]);
-        sleep(1);
-        thread_pools[i]->finish();
+        uint64_t hashi = test(* thread_pools[i]);
         auto after = std::chrono::steady_clock::now();
-        std::cout << "Test #" << i << ": "
-                  << std::chrono::duration_cast
-            <std::chrono::microseconds>(after - before).count() << "us\n";
+        std::cout << "Test #" << i << ": " << std::chrono::duration_cast
+            <std::chrono::milliseconds>(after - before).count() << "ms\n";
         
-        if (i)
-            assert(hash == test_hash);
+        if (i){
+            if (hash0 != hashi){
+                std::cerr << "Hashes for 0 (" << hash0 << ") and "
+                          << i << "(" << hashi << ") don't match\n";
+                std::terminate();
+            }
+        }
         else
-            hash = test_hash;
+            hash0 = hashi;
+
     }
 }

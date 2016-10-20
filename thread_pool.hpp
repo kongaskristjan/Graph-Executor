@@ -7,16 +7,16 @@
 /*
   Thread_pool:
   push() - push a job to be processed
-  wait() - wait for all jobs to complete
+  finish() - wait for all jobs to finish. Must be called from
+      the thread owning Thread_pool.
 
-  push() can be called from Thread_pool_job::execute(),
-      but wait() shouldn't
+  May use x86 memory model specific assumptions.
 */
 
 class Thread_pool {
 public:
     virtual void push(std::unique_ptr<Thread_pool_job>) = 0;
-    virtual void wait() = 0;
+    virtual void finish() = 0;
     
     virtual inline ~Thread_pool();
 };

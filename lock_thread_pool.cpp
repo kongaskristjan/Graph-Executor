@@ -37,15 +37,17 @@ void Lock_thread_pool::push(std::unique_ptr<Thread_pool_job> job)
 
 void Lock_thread_pool::finish()
 {
-    finish_flag = true;
-    
-    worker_cv.notify_all();
     std::unique_lock<std::mutex> jobs_lck(jobs_mtx);
+    finish_flag = true;
+
+    worker_cv.notify_all();
     while (undone_jobs > 0)
         finish_cv.wait(jobs_lck);
-    jobs_lck.unlock();
     
     finish_flag = false;
+    jobs_lck.unlock();
+
+    check_invariant();
 }
 
 
@@ -63,14 +65,14 @@ std::unique_ptr<Thread_pool_job> Lock_thread_pool::get_job()
 
 void Lock_thread_pool::thread_wait()
 {
-    do {
-        // No data race is possible in undone_jobs == 0,
-        // as undone_jobs can't increase anymore
+    while (! exit_flag) {
+        std::unique_lock<std::mutex> jobs_lck(jobs_mtx);
+        
         if (finish_flag && undone_jobs == 0)
             finish_cv.notify_one();
 
-        std::unique_lock<std::mutex> jobs_lck(jobs_mtx);
-        worker_cv.wait(jobs_lck);
+        if (jobs.empty())
+            worker_cv.wait(jobs_lck);
         auto job = get_job();
         jobs_lck.unlock();
 
@@ -78,5 +80,7 @@ void Lock_thread_pool::thread_wait()
             job->execute();
             --undone_jobs;
         }
-    } while (! exit_flag);
+    }
+
+    check_invariant();
 }

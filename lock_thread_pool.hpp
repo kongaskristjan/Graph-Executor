@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <typeinfo>
+#include <iostream>
 #include <thread>
 #include <condition_variable>
 #include <mutex>
@@ -22,7 +23,7 @@
 
 class Lock_thread_pool: public Thread_pool {
 public:
-    Lock_thread_pool(uint64_t); // pass 0 to detect hardware concurrency
+    Lock_thread_pool(uint64_t = 0); // pass 0 to detect hardware concurrency
     ~Lock_thread_pool();
 
     void push(std::unique_ptr<Thread_pool_job>);
@@ -39,8 +40,8 @@ private:
     std::mutex jobs_mtx;
 
     std::atomic<uint64_t> undone_jobs{0}; // number of jobs not yet done
-    bool finish_flag = false;
-    bool exit_flag = false;
+    std::atomic<bool> finish_flag{false};
+    std::atomic<bool> exit_flag{false};
 };
 
 

@@ -27,8 +27,8 @@ void test_graph_executor()
 void test_thread_pool()
 {
     Thread_pool_tester tester;
-    tester.add(std::make_unique<Lock_thread_pool>(1));
-    tester.add(std::make_unique<Lock_thread_pool>(1));
+    for (int i = 1; i <= 24; ++i)
+        tester.add(std::make_unique<Lock_thread_pool>(i));
 
     perform_all_tests(tester);
 }

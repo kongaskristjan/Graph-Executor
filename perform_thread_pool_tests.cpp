@@ -8,20 +8,20 @@ Tp_power::Tp_power(std::atomic<uint64_t> & _sum, int _xp):
 
 void Tp_power::execute()
 {
-    std::cout << xp << "\n";
+    // Arithmetic modulo 2^64
     uint64_t m = 1;
     for (int i = 0; i < xp; ++i)
-        m = (3 * m) % 1000000007;
-
-    sum += m;
+        m *= 3;
+    sum += 1;
 }
 
 
 uint64_t power_test(Thread_pool & tp)
 {
     std::atomic<uint64_t> sum(0);
-    for (int i = 0; i < 1000; ++i)
-        tp.push(std::make_unique<Tp_power>(sum, i));
+    for (int i = 0; i < 1e5; ++i)
+        tp.push(std::make_unique<Tp_power>(sum, 10));
+    tp.finish();
     
     return sum;
 }

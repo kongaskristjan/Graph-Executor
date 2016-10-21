@@ -97,6 +97,8 @@ inline void Single_graph_executor::check_invariant() const
 
 inline void Single_graph_executor::good_arg(uint64_t arg) const
 {
+    (void) arg; // otherwise compiler warns if in NDEBUG mode
+    
     assert(arg < total); // Argument exists
     assert(arg >= offset); // Argument is cleared
     assert(tasks[arg - offset].dep_count > 0); // Dep count is non-zero

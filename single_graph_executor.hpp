@@ -31,7 +31,6 @@ public:
     
     const Result & operator[](const Graph_ptr &) override;
     std::unique_ptr<Result> hand_over(const Graph_ptr &) override;
-    std::unique_ptr<Result> force_hand_over(const Graph_ptr &) override;
     
     struct Single_graph_ptr: public Graph_ptr {
         uint64_t id;

@@ -49,7 +49,6 @@ public:
     
     virtual const Result & operator[](const Graph_ptr &) = 0;
     virtual std::unique_ptr<Result> hand_over(const Graph_ptr &) = 0;
-    virtual std::unique_ptr<Result> force_hand_over(const Graph_ptr &) = 0;
     
     virtual inline ~Graph_executor();
 };

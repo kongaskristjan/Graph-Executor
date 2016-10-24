@@ -92,14 +92,6 @@ std::unique_ptr<Result> Single_graph_executor::hand_over(const Graph_ptr & ptr)
 }
 
 
-std::unique_ptr<Result> Single_graph_executor::force_hand_over(const Graph_ptr & ptr)
-{
-    uint64_t index = ptr_to_index(ptr);
-    tasks[index].dep_count = 0;
-    return hand_over(ptr);
-}
-
-
 void Single_graph_executor::calculate(uint64_t index)
 {
     if (tasks[index - offset].result)

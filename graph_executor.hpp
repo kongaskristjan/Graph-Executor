@@ -20,18 +20,11 @@
   hand_over() - hand result over to the main process. If answer is
       not yet calculated, it will wait until it is calculated.
       If answer is used by another job, Graph_executor waits until it's done.
-  force_hand_over() - Same as hand_over, but doesn't wait if other
-      jobs might use it according to dep_count. Might cause a Segmentation
-      Fault if used incorrectly.
 
-  Graph_executor assumes at the moment, that no jobs are created within
-      jobs themselves. However, this might change later.
-
-  The following might be used as an expansion.
-  """Graph_executor assumes that no threads are explicitly created by any
+  Graph_executor assumes that no threads are explicitly created by any
       jobs. Jobs may however be created by main thread or other jobs.
       However, those results may not be used (the only arguments used
-      must be those given as arguments)."""
+      must be those given as arguments).
 */
 
 struct Graph_ptr {

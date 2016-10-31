@@ -19,7 +19,7 @@ void Tp_power::execute()
 uint64_t power_test(Thread_pool & tp)
 {
     std::atomic<uint64_t> sum(0);
-    for (int i = 0; i < 1e5; ++i)
+    for (int i = 0; i < 1e4; ++i)
         tp.push(std::make_unique<Tp_power>(sum, 10));
     tp.finish();
     

@@ -47,4 +47,6 @@ void Perform_tests::random_add(Tester & tester, const size_t n, const size_t k)
         uint64_t idx1 = distr(gen);
         tester.push(Add(), std::vector<uint64_t>({idx0, idx1}));
     }
+    
+    tester.verify_and_end_test();
 }

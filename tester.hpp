@@ -10,7 +10,7 @@
 #include <cassert>
 #include <iostream>
 #include <exception>
-
+#include <chrono>
 
 // Compares different executors and veryfies the
 // equality of results from different executors.
@@ -37,7 +37,7 @@ public:
     
 private:
     std::vector<uint64_t> gen_shuffled() const;
-
+ 
     std::vector<Exec_holder> executors;
     uint64_t total = 0;
 };

@@ -43,7 +43,7 @@ void Tester::verify_and_end_test()
             ((* executors[0].exec)[ptr_0]).hash();
         
         for (size_t j = 1; j < executors.size(); ++j){
-            const Graph_ptr & ptr_i = * executors[0].result_map[i];
+            const Graph_ptr & ptr_i = * executors[j].result_map[i];
             unsigned hash_i = static_cast<const Example_result &>
                 ((* executors[j].exec)[ptr_i]).hash();
 

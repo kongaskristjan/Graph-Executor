@@ -19,7 +19,9 @@
       is not yet calculated, it will wait until it is calculated.
   hand_over() - hand result over to the main process. If answer is
       not yet calculated, it will wait until it is calculated.
-      If answer is used by another job, Graph_executor waits until it's done.
+      Owner of Graph_executor must ensure that the handed result
+      is not used anymore by other jobs (for example by calling
+      operator[] for those jobs).
 
   Graph_executor assumes that no threads are explicitly created by any
       jobs. Jobs may however be created by main thread or other jobs.

@@ -55,6 +55,7 @@ void test_data_structures()
 
 int main()
 {
+    srand(time(NULL));
     test_data_structures();
     test_thread_pool();
     test_graph_executor();

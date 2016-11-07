@@ -25,6 +25,11 @@ void test_graph_executor()
 
 void test_thread_pool()
 {
+    for (int i = 0; i < 3000; ++i){
+        Lock_thread_pool ltp2(2);
+        Lock_thread_pool ltp3(3);
+    }
+    
     Thread_pool_tester tester;
     for (int i = 1; i <= 24; ++i)
         tester.add(std::make_unique<Lock_thread_pool>(i));

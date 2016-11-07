@@ -14,8 +14,11 @@ Lock_thread_pool::Lock_thread_pool(uint64_t nthreads)
 Lock_thread_pool::~Lock_thread_pool()
 {
     finish();
-    
-    exit_flag = true;
+
+    {
+        std::lock_guard<std::mutex> lck(jobs_mtx);
+        exit_flag = true;
+    }
     worker_cv.notify_all();
     
     for (std::thread & thr: threads)
@@ -39,13 +42,12 @@ void Lock_thread_pool::finish()
 {
     std::unique_lock<std::mutex> jobs_lck(jobs_mtx);
     finish_flag = true;
-
+    
     worker_cv.notify_all();
     while (undone_jobs > 0)
         finish_cv.wait(jobs_lck);
     
     finish_flag = false;
-    jobs_lck.unlock();
 
     check_invariant();
 }
@@ -76,6 +78,7 @@ void Lock_thread_pool::thread_wait()
 
         if (jobs.empty())
             worker_cv.wait(jobs_lck);
+        
         auto job = get_job();
         jobs_lck.unlock();
 

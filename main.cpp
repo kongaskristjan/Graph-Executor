@@ -8,6 +8,8 @@
 #include <perform_thread_pool_tests.hpp>
 #include <lock_thread_pool.hpp>
 #include <lock_graph_executor.hpp>
+#include <concurrent_list.hpp>
+#include <perform_data_structure_tests.hpp>
 #include <iostream>
 
 void test_graph_executor()
@@ -33,8 +35,22 @@ void test_thread_pool()
 }
 
 
+void test_data_structures()
+{
+    for (int threads = 1; threads <= 20; ++threads){
+        Lock_thread_pool tp(threads);
+
+        {
+            Concurrent_list<int> lst;
+            perform_ds_test(tp, lst);
+        }
+    }
+}
+
+
 int main()
 {
+    test_data_structures();
     test_thread_pool();
     test_graph_executor();
 

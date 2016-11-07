@@ -65,8 +65,11 @@ std::unique_ptr<Thread_pool_job> Lock_thread_pool::get_job()
 
 void Lock_thread_pool::thread_wait()
 {
-    while (! exit_flag) {
+    while (true) {
         std::unique_lock<std::mutex> jobs_lck(jobs_mtx);
+
+        if (exit_flag)
+            break;
         
         if (finish_flag && undone_jobs == 0)
             finish_cv.notify_one();

@@ -10,18 +10,37 @@
 // This class implements basic functionality just
 // for Lock_free_thread_pool:
 //     push(...)
-//     pop() If list is empty, null_ptr is returned
+//     pop() If list is empty, nullptr is returned
+
+template<typename T>
+struct Concurrent_node {
+    Concurrent_node(const T &, std::shared_ptr<Concurrent_node<T>>);
+    
+    T x;
+    std::shared_ptr<Concurrent_node<T>> next; // Only access atomically
+};
+
 
 template<typename T>
 class Concurrent_list {
 public:
-    Concurrent_list<T>() = default;
+    class ptr;
     
     void push(const T &);
-    std::shared_ptr<T> pop();
+    ptr pop();
 
+    class ptr {
+        std::shared_ptr<Concurrent_node<T>> p;
+
+    public:
+        ptr(std::shared_ptr<Concurrent_node<T>> _p): p(_p) {}
+        T & operator*() { return p->x; }
+        T * operator->() { return & p->x; }
+        operator bool() const { return (bool) p; }
+    };
+    
 private:
-    std::shared_ptr<T> head;
+    std::shared_ptr<Concurrent_node<T>> head; // Only access atomically
 };
 
 #endif

@@ -42,7 +42,7 @@ void test_thread_pool()
 
 void test_data_structures()
 {
-    for (int threads = 1; threads <= 20; ++threads){
+    for (int threads = 1; threads <= 10; ++threads){
         Lock_thread_pool tp(threads);
 
         {
@@ -56,6 +56,7 @@ void test_data_structures()
 int main()
 {
     srand(time(NULL));
+    
     test_data_structures();
     test_thread_pool();
     test_graph_executor();

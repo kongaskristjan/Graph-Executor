@@ -6,11 +6,11 @@
 #include <random>
 #include <memory>
 
-template<template <class T> class Cont, class T>
+template<template <typename T> typename Cont, typename T>
 void perform_ds_test(Thread_pool &, Cont<T> &);
 
 
-template<template <class T> class Cont, class T>
+template<template <typename T> typename Cont, typename T>
 class Ds_tester: public Thread_pool_job {
 public:
     Ds_tester<Cont, T>(Cont<T> &, std::atomic<int64_t> & sz_cnt, int seed);

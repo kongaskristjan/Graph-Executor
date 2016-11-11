@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <atomic>
+#include <thread_pool_job.hpp>
 
 // A lock-free implementation of singly linked list
 // All elements are popped from and pushed to front.
@@ -14,9 +15,9 @@
 
 template<typename T>
 struct Concurrent_node {
-    Concurrent_node(const T &, std::shared_ptr<Concurrent_node<T>>);
+    Concurrent_node(T, std::shared_ptr<Concurrent_node<T>>);
     
-    T x;
+    T val;
     std::shared_ptr<Concurrent_node<T>> next; // Only access atomically
 };
 
@@ -26,7 +27,7 @@ class Concurrent_list {
 public:
     class ptr;
     
-    void push(const T &);
+    void push(T);
     ptr pop();
 
     class ptr {
@@ -34,8 +35,8 @@ public:
 
     public:
         ptr(std::shared_ptr<Concurrent_node<T>> _p): p(_p) {}
-        T & operator*() { return p->x; }
-        T * operator->() { return & p->x; }
+        T & operator*() { return p->val; }
+        T * operator->() { return & p->val; }
         operator bool() const { return (bool) p; }
     };
     

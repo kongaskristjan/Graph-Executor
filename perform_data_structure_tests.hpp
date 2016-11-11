@@ -7,17 +7,19 @@ template<template <typename T> typename Cont, typename T>
 void perform_ds_test(Thread_pool & tp, Cont<T> & cont)
 {
     std::atomic<int64_t> sz_cnt{0};
-
+    
     for (int i = 0; i < 200; ++i)
         tp.push(std::make_unique<Ds_tester<Cont, T>>(cont, sz_cnt, rand()));
-
+    
     tp.finish();
 
     while (cont.pop())
         --sz_cnt;
 
-    if (sz_cnt != 0)
-        std::terminate(); // No elements have "vanished" without spontaneously
+    if (sz_cnt != 0){
+        std::cerr << "Error\n";
+        std::terminate(); // No elements have "vanished" spontaneously
+    }
 }
 
 

@@ -10,19 +10,20 @@
 // Lock_free_thread_pool
 
 template<typename T>
-Concurrent_node<T>::Concurrent_node(const T & _x,
+Concurrent_node<T>::Concurrent_node(T _val,
                                     std::shared_ptr<Concurrent_node<T>> _next):
-    x(_x),
+    val(std::move(_val)),
     next(std::move(_next))
 {}
 
 
 // shared_ptr-s can be atomically swapped, no ref counts are invalidated
 template<typename T>
-void Concurrent_list<T>::push(const T & x)
+void Concurrent_list<T>::push(T x)
 {
-    auto node = std::make_shared<Concurrent_node<T>>(x, std::atomic_load(& head));
-
+    auto node = std::make_shared<Concurrent_node<T>>
+        (std::move(x), std::atomic_load(& head));
+    
     // ABA can't happen betwenn head and node->next,
     // as node->next is also a shared_ptr
     while (! std::atomic_compare_exchange_weak(& head, & (node->next), node))

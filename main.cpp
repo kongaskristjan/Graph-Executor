@@ -7,6 +7,7 @@
 #include <thread_pool_tester.hpp>
 #include <perform_thread_pool_tests.hpp>
 #include <lock_thread_pool.hpp>
+#include <lock_free_thread_pool.hpp>
 #include <lock_graph_executor.hpp>
 #include <concurrent_list.hpp>
 #include <perform_data_structure_tests.hpp>
@@ -30,11 +31,16 @@ void test_thread_pool()
     for (int i = 0; i < 3000; ++i){
         Lock_thread_pool ltp2(2);
         Lock_thread_pool ltp3(3);
+        Lock_free_thread_pool lftp1(1);
+        Lock_free_thread_pool lftp2(2);
+        Lock_free_thread_pool lftp3(3);
     }
     
     Thread_pool_tester tester;
     for (int i = 1; i <= 24; ++i)
         tester.add(std::make_unique<Lock_thread_pool>(i));
+    for (int i = 1; i <= 24; ++i)
+        tester.add(std::make_unique<Lock_free_thread_pool>(i));
 
     perform_all_tests(tester);
 }

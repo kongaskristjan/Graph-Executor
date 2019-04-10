@@ -7,12 +7,14 @@
 
 class Tp_power: public Thread_pool_job {
 public:
-    Tp_power(std::atomic<uint64_t> & _sum, int _xp);
+    Tp_power(std::atomic<uint32_t> & _sum, int _xp);
+    ~Tp_power();
     void execute();
     
 private:
-    std::atomic<uint64_t> & sum;
+    std::atomic<uint32_t> & sum;
     int xp;
+    bool didExecute = false;
 };
 
 uint64_t power_test(Thread_pool &);

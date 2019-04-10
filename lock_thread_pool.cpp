@@ -67,8 +67,14 @@ std::unique_ptr<Thread_pool_job> Lock_thread_pool::get_job()
 
 void Lock_thread_pool::thread_wait()
 {
+    bool decrease_undone_jobs = false;
     while (true) {
         std::unique_lock<std::mutex> jobs_lck(jobs_mtx);
+
+	if(decrease_undone_jobs) {
+	    --undone_jobs;
+	    decrease_undone_jobs = false;
+	}
 
         if (exit_flag)
             break;
@@ -84,7 +90,7 @@ void Lock_thread_pool::thread_wait()
 
         if (job){
             job->execute();
-            --undone_jobs;
+	    decrease_undone_jobs = true;
         }
     }
 

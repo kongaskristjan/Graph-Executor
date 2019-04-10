@@ -39,7 +39,7 @@ private:
     std::condition_variable worker_cv, finish_cv;
     std::mutex jobs_mtx;
 
-    std::atomic<uint64_t> undone_jobs{0}; // number of jobs not yet done
+    uint64_t undone_jobs{0}; // number of jobs not yet done
     bool finish_flag{false};
     bool exit_flag{false};
 };
